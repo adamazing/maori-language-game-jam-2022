@@ -7,20 +7,20 @@ on:
     branches: [main]
 
 jobs:
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Pull build cache
-        id: cache-build
-        uses: actions/cache@v3
-        with:
-          path: ./target
-          key: windows-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
-      - name: Build
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        run: cargo build
+  # build-windows:
+  #   runs-on: windows-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #     - name: Pull build cache
+  #       id: cache-build
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ./target
+  #         key: windows-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
+  #     - name: Build
+  #       if: steps.cache-build.outputs.cache-hit != 'true'
+  #       run: cargo build
 
   build-mac:
     runs-on: macos-latest

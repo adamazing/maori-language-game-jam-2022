@@ -2198,6 +2198,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "maui-game"
+version = "0.1.1"
+dependencies = [
+ "bevy",
+ "image",
+ "winit",
+]
+
+[[package]]
 name = "memchr"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2263,15 +2272,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "my-game"
-version = "0.1.0"
-dependencies = [
- "bevy",
- "image",
- "winit",
-]
-
-[[package]]
 name = "naga"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2308,7 +2308,7 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "image",
- "my-game",
+ "maui-game",
  "winit",
 ]
 
@@ -3471,7 +3471,7 @@ name = "wasm-launcher"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "my-game",
+ "maui-game",
  "stylist",
  "web-sys",
  "yew",

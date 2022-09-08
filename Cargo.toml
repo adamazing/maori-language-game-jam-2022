@@ -1,6 +1,6 @@
 [package]
-name = "my-game"
-version = "0.1.0"
+name = "maui-game"
+version = "0.1.1"
 edition = "2021"
 
 [workspace]
