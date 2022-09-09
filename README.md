@@ -3,7 +3,7 @@
 
 # Māori Language Week Game Jam 2022
 
-<img src="" width="756px" height="600px"/>
+<img src="" width="260px" height="200px"/>
 
 </div>
 

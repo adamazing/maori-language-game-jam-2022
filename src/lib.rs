@@ -1,6 +1,7 @@
+#![allow(clippy::type_complexity,clippy::too_many_arguments)]
 use bevy::prelude::*;
 
-pub const LAUNCHER_TITLE: &str = "Bevy Shell - Template";
+pub const LAUNCHER_TITLE: &str = "Tane Mahuta";
 
 pub fn app() -> App {
     let mut app = App::new();
