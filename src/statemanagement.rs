@@ -11,4 +11,3 @@ pub enum PauseState {
     Paused,
     UnPaused,
 }
-

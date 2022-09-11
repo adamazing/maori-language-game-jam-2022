@@ -167,4 +167,3 @@ fn change_pause_state(
         }
     }
 }
-

@@ -36,4 +36,3 @@ pub struct AudioAssets {
     #[asset(path = "audio/music/soothing-nature-by-chilledmusic.ogg")]
     pub soothing_nature: Handle<AudioSource>,
 }
-
