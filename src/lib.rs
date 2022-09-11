@@ -25,7 +25,7 @@ pub fn app() -> App {
         title: LAUNCHER_TITLE.to_string(),
         canvas: Some("#bevy".to_string()),
         fit_canvas_to_parent: true,
-        ..Default::default()
+        ..default()
     })
     .add_plugins(DefaultPlugins)
     .add_plugin(AssetPlugin)
