@@ -1,6 +1,6 @@
 [package]
-name = "native-launcher"
-version = "0.1.0"
+name = "tane-game-launcher"
+version = "0.1.3"
 edition = "2021"
 workspace = "../.."
 

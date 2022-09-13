@@ -13,6 +13,7 @@ impl Plugin for AssetPlugin {
             LoadingState::new(GameState::Loading)
                 .with_collection::<AudioAssets>()
                 .with_collection::<FontAssets>()
+                .with_collection::<BackgroundLayerAssets>()
                 .continue_to_state(GameState::GamePlaying),
         );
     }
@@ -35,4 +36,19 @@ pub struct AudioAssets {
 
     #[asset(path = "audio/music/soothing-nature-by-chilledmusic.ogg")]
     pub soothing_nature: Handle<AudioSource>,
+}
+
+#[derive(AssetCollection)]
+pub struct BackgroundLayerAssets {
+    #[asset(path = "graphics/forest/background_c_layer_1.png")]
+    pub background_layer_1: Handle<Image>,
+
+    #[asset(path = "graphics/forest/background_c_layer_2.png")]
+    pub background_layer_2: Handle<Image>,
+
+    #[asset(path = "graphics/forest/background_c_layer_3.png")]
+    pub background_layer_3: Handle<Image>,
+
+    #[asset(path = "graphics/forest/background_c_layer_4.png")]
+    pub background_layer_4: Handle<Image>,
 }
