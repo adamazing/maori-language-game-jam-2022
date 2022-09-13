@@ -12,11 +12,13 @@ mod helpers;
 mod music;
 mod paused;
 mod statemanagement;
+mod render;
 
 use assets::AssetPlugin;
 use debug::DebugPlugin;
 use music::MusicPlugin;
 use paused::PausePlugin;
+use render::RenderPlugin;
 use statemanagement::{GameState, PauseState};
 
 pub fn app() -> App {
@@ -35,14 +37,8 @@ pub fn app() -> App {
         .add_plugin(AudioPlugin)
         .add_plugin(PausePlugin)
         .add_plugin(DebugPlugin)
-        .add_startup_system(load_icon);
+        .add_plugin(RenderPlugin);
     app
 }
 
-fn load_icon(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn_bundle(Camera2dBundle::default());
-    commands.spawn_bundle(SpriteBundle {
-        texture: asset_server.load("bevy.png"),
-        ..default()
-    });
-}
+
