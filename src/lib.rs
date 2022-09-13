@@ -7,12 +7,14 @@ pub use iyes_loopless::prelude::*;
 pub const LAUNCHER_TITLE: &str = "Tane Mahuta";
 
 mod assets;
+mod debug;
 mod helpers;
 mod music;
 mod paused;
 mod statemanagement;
 
 use assets::AssetPlugin;
+use debug::DebugPlugin;
 use music::MusicPlugin;
 use paused::PausePlugin;
 use statemanagement::{GameState, PauseState};
@@ -32,6 +34,7 @@ pub fn app() -> App {
         .add_plugin(MusicPlugin)
         .add_plugin(AudioPlugin)
         .add_plugin(PausePlugin)
+        .add_plugin(DebugPlugin)
         .add_startup_system(load_icon);
     app
 }
