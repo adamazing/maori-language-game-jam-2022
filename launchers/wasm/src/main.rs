@@ -3,7 +3,7 @@ use stylist::yew::styled_component;
 use stylist::{css, global_style};
 use yew::prelude::*;
 
-use maui_game::LAUNCHER_TITLE;
+use tane_game::LAUNCHER_TITLE;
 
 fn set_window_title(title: &str) {
     web_sys::window()
@@ -55,7 +55,7 @@ fn main() {
     // Mount the DOM
     yew::start_app::<Root>();
     // Start the Bevy App
-    let mut app = maui_game::app();
+    let mut app = tane_game::app();
     info!("Starting launcher: WASM");
     app.run();
 }
