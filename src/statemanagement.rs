@@ -3,6 +3,7 @@
 pub enum GameState {
     MainMenu,
     Loading,
+    GameIntro,
     GamePlaying,
 }
 

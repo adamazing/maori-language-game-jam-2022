@@ -2,39 +2,90 @@ use std::collections::{HashMap, HashSet};
 
 use bevy::{
     prelude::*,
-    render::camera::{DepthCalculation, ScalingMode, WindowOrigin}
+    render::camera::{DepthCalculation, ScalingMode, WindowOrigin},
 };
 use bevy_ecs_ldtk::prelude::*;
+use bevy_inspector_egui::Inspectable;
 // use bevy_inspector_egui::Inspectable;
 use heron::prelude::*;
 use iyes_loopless::prelude::*;
 
-use crate::{statemanagement::{GameState, PauseState}, assets::LevelAsset};
+// use bevy_flycam::{FlyCam, MovementSettings, NoCameraPlayerPlugin};
+
+use crate::{
+    assets::LevelAsset,
+    kiwi::Kiwi,
+    statemanagement::{GameState, PauseState},
+};
 
 pub struct LevelManagerPlugin;
 
 impl Plugin for LevelManagerPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .insert_resource(LevelSelection::Uid(0))
+        app.insert_resource(LevelSelection::Uid(0))
             .insert_resource(LdtkSettings {
                 level_spawn_behavior: LevelSpawnBehavior::UseZeroTranslation,
                 set_clear_color: SetClearColor::No,
                 level_background: LevelBackground::Nonexistent,
                 ..default()
             })
+            // .add_plugin(NoCameraPlayerPlugin)
             .add_startup_system(setup_camera)
             .add_enter_system(GameState::GamePlaying, spawn_level)
             .register_ldtk_int_cell::<ForestFloorBundle>(1)
             .register_ldtk_int_cell::<BoardBundle>(2)
+            .register_ldtk_entity::<CameraWayPointBundle>("CameraWayPoint")
             .add_system(pause_physics_during_load)
             .add_system(spawn_wall_collision)
             .add_system(spawn_ground_sensor)
             .add_system(ground_detection)
             .add_enter_system(PauseState::Paused, pause_physics)
             .add_exit_system(PauseState::Paused, unpause_physics)
-            .add_system(restart_level)
-         ;
+            .add_system(restart_level);
+    }
+}
+
+#[derive(Component, Default, Debug, Inspectable)]
+pub struct CameraWayPoint;
+
+#[derive(Bundle, Component, Default)]
+pub struct CameraWayPointBundle {
+    waypoint: CameraWayPoint,
+}
+
+impl LdtkEntity for CameraWayPointBundle {
+    fn bundle_entity(
+        entity_instance: &EntityInstance,
+        _layer_instance: &LayerInstance,
+        _tileset: Option<&Handle<Image>>,
+        _tileset_definition: Option<&TilesetDefinition>,
+        _asset_server: &AssetServer,
+        _texture_atlases: &mut Assets<TextureAtlas>,
+    ) -> CameraWayPointBundle {
+        println!("CameraWayPointBundle added, here are some facts:");
+        for field_instance in &entity_instance.field_instances {
+            println!(
+                "    its {} {}",
+                field_instance.identifier,
+                explain_field(&field_instance.value)
+            );
+        }
+
+        CameraWayPointBundle { ..default() }
+    }
+}
+
+fn explain_field(value: &FieldValue) -> String {
+    match value {
+        FieldValue::Int(Some(i)) => format!("has an integer of {}", i),
+        FieldValue::Float(Some(f)) => format!("has a float of {}", f),
+        FieldValue::Bool(b) => format!("is {}", b),
+        FieldValue::String(Some(s)) => format!("says {}", s),
+        FieldValue::Color(c) => format!("has the color {:?}", c),
+        FieldValue::Enum(Some(e)) => format!("is the variant {}", e),
+        FieldValue::FilePath(Some(f)) => format!("references {}", f),
+        FieldValue::Point(Some(p)) => format!("is at ({}, {})", p.x, p.y),
+        a => format!("is hard to explain: {:?}", a),
     }
 }
 
@@ -49,7 +100,91 @@ fn setup_camera(mut commands: Commands) {
         },
         transform: Transform::from_xyz(0.0,0.0,40.0),
         ..default()
-    });
+    })
+    // .insert(FlyCam)
+        ;
+}
+
+fn normalise_camera_within_level(
+    mut camera_query: Query<
+        (
+            &mut bevy::render::camera::OrthographicProjection,
+            &mut Transform,
+        ),
+        (Without<Kiwi>, With<Camera2d>),
+    >,
+    player_query: Query<&Transform, With<Kiwi>>,
+    level_query: Query<
+        (&Transform, &Handle<LdtkLevel>),
+        (Without<OrthographicProjection>, Without<Kiwi>),
+    >,
+    level_selection: Res<LevelSelection>,
+    ldtk_levels: Res<Assets<LdtkLevel>>,
+    windows: Res<Windows>,
+) {
+    debug!("Normalise camera in level");
+    let window = windows.primary();
+    let aspect_ratio: f32 = window.width() / window.height();
+
+    if let Ok(Transform {
+        translation: player_translation,
+        ..
+    }) = player_query.get_single()
+    {
+        let player_translation = *player_translation;
+
+        let (mut orthographic_projection, mut camera_transform) =
+            camera_query.single_mut();
+
+        for (level_transform, level_handle) in &level_query {
+            if let Some(ldtk_level) = ldtk_levels.get(level_handle) {
+                let level = &ldtk_level.level;
+                if level_selection.is_match(&0, level) {
+                    let level_ratio =
+                        level.px_wid as f32 / ldtk_level.level.px_hei as f32;
+
+                    orthographic_projection.scaling_mode =
+                        bevy::render::camera::ScalingMode::None;
+                    orthographic_projection.bottom = 0.;
+                    orthographic_projection.left = 0.;
+                    if level_ratio > aspect_ratio {
+                        orthographic_projection.top =
+                            (level.px_hei as f32 / 9.).round() * 9.;
+                        orthographic_projection.right =
+                            orthographic_projection.top * aspect_ratio;
+                        camera_transform.translation.x = (player_translation.x
+                            - level_transform.translation.x
+                            - orthographic_projection.right / 2.)
+                            .clamp(
+                                0.,
+                                level.px_wid as f32
+                                    - orthographic_projection.right,
+                            );
+                        camera_transform.translation.y = 0.;
+                    } else {
+                        orthographic_projection.right =
+                            (level.px_wid as f32 / 16.).round() * 16.;
+                        orthographic_projection.top =
+                            orthographic_projection.right / aspect_ratio;
+                        camera_transform.translation.y = (player_translation.y
+                            - level_transform.translation.y
+                            - orthographic_projection.top / 2.)
+                            .clamp(
+                                0.,
+                                level.px_hei as f32
+                                    - orthographic_projection.top,
+                            );
+                        camera_transform.translation.x = 0.;
+                    }
+
+                    camera_transform.translation.x +=
+                        level_transform.translation.x;
+                    camera_transform.translation.y +=
+                        level_transform.translation.y;
+                }
+            }
+        }
+    }
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
@@ -70,14 +205,13 @@ pub struct Climbable;
 
 #[derive(Clone, Debug, Default, Bundle, LdtkIntCell)]
 pub struct ForestFloorBundle {
-    ground: Wall
+    ground: Wall,
 }
 
 #[derive(Clone, Debug, Default, Bundle, LdtkIntCell)]
 pub struct BoardBundle {
-    ground: Wall
+    ground: Wall,
 }
-
 
 fn spawn_level(mut commands: Commands, level: Res<LevelAsset>) {
     debug!("Spawning level");
@@ -432,6 +566,3 @@ fn restart_level(
         }
     }
 }
-
-
-

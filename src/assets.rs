@@ -16,7 +16,7 @@ impl Plugin for AssetPlugin {
                 .with_collection::<FontAssets>()
                 .with_collection::<BackgroundLayerAssets>()
                 .with_collection::<LevelAsset>()
-                .continue_to_state(GameState::GamePlaying),
+                .continue_to_state(GameState::GameIntro),
         );
     }
 
