@@ -84,7 +84,7 @@ fn spawn_level(mut commands: Commands, level: Res<LevelAsset>) {
 
     commands.spawn_bundle(LdtkWorldBundle {
         ldtk_handle: level.scene.clone(),
-        transform: Transform::from_xyz(0., 0., 5.),
+        transform: Transform::from_xyz(-660., -300., 5.),
         ..default()
     });
 }
