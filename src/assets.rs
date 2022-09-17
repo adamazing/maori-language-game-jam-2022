@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
+use bevy_ecs_ldtk::LdtkAsset;
 use bevy_kira_audio::AudioSource;
 
 use crate::statemanagement::GameState;
@@ -14,6 +15,7 @@ impl Plugin for AssetPlugin {
                 .with_collection::<AudioAssets>()
                 .with_collection::<FontAssets>()
                 .with_collection::<BackgroundLayerAssets>()
+                .with_collection::<LevelAsset>()
                 .continue_to_state(GameState::GamePlaying),
         );
     }
@@ -51,4 +53,10 @@ pub struct BackgroundLayerAssets {
 
     #[asset(path = "graphics/forest/background_c_layer_4.png")]
     pub background_layer_4: Handle<Image>,
+}
+
+#[derive(AssetCollection)]
+pub struct LevelAsset {
+    #[asset(path = "levels/levels.ldtk")]
+    pub scene: Handle<LdtkAsset>,
 }

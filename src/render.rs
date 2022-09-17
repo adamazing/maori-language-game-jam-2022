@@ -10,7 +10,6 @@ impl Plugin for RenderPlugin {
     fn build(&self, app: &mut App)  {
         app
             .insert_resource(ImageSettings::default_nearest())
-            .add_startup_system(initialize_camera_system)
             .add_enter_system(GameState::GamePlaying, spawn_background_layers);
     }
 }
@@ -49,12 +48,4 @@ pub fn spawn_background_layers(mut commands: Commands, background_layers: Res<Ba
             ..default()
         })
         ;
-}
-
-pub fn initialize_camera_system(mut commands: Commands) {
-    commands
-        .spawn_bundle(Camera2dBundle {
-            transform: Transform::from_xyz(0.0,0.0,40.0),
-           ..default()
-        });
 }
