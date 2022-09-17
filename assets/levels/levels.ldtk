@@ -593,9 +593,9 @@
 			"renderMode": "Tile",
 			"showName": true,
 			"tilesetId": 62,
-			"tileId": 0,
+			"tileId": 2,
 			"tileRenderMode": "FitInside",
-			"tileRect": { "tilesetUid": 62, "x": 0, "y": 0, "w": 16, "h": 16 },
+			"tileRect": { "tilesetUid": 62, "x": 32, "y": 0, "w": 16, "h": 16 },
 			"nineSliceBorders": [],
 			"maxCount": 1,
 			"limitScope": "PerWorld",
@@ -776,14 +776,14 @@
 			}
 		},
 		{
-			"__cWid": 4,
-			"__cHei": 4,
+			"__cWid": 10,
+			"__cHei": 1,
 			"identifier": "Kiwi_sprite_001",
 			"uid": 62,
-			"relPath": "../graphics/sprites/kiwi_sprite_001.aseprite",
+			"relPath": "../graphics/sprites/kiwi_sprite_001.png",
 			"embedAtlas": null,
-			"pxWid": 64,
-			"pxHei": 64,
+			"pxWid": 160,
+			"pxHei": 16,
 			"tileGridSize": 16,
 			"spacing": 0,
 			"padding": 0,
@@ -792,7 +792,7 @@
 			"enumTags": [],
 			"customData": [],
 			"savedSelections": [],
-			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "4743474347434743464347434743474347434743000000000000000000000000" }
+			"cachedPixelData": { "opaqueTiles": "0000000000", "averageColors": "4743474347434743464347434743474347434743" }
 		}
 	], "enums": [], "externalEnums": [], "levelFields": [] },
 	"levels": [
@@ -846,7 +846,7 @@
 							"__grid": [33,32],
 							"__pivot": [0.5,0.5],
 							"__tags": [],
-							"__tile": { "tilesetUid": 62, "x": 0, "y": 0, "w": 16, "h": 16 },
+							"__tile": { "tilesetUid": 62, "x": 32, "y": 0, "w": 16, "h": 16 },
 							"__smartColor": "#94D9B3",
 							"iid": "091dc9c0-2a00-11ed-9511-e31c0a9532dc",
 							"width": 16,
