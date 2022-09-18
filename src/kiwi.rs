@@ -1,9 +1,10 @@
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-use bevy_inspector_egui::Inspectable;
+use bevy_inspector_egui::{Inspectable, InspectorPlugin};
+use bevy_inspector_egui::widgets::{InspectorQuery, InspectorQuerySingle};
 use heron::prelude::*;
 use iyes_loopless::prelude::ConditionSet;
-use leafwing_input_manager::{prelude::*, *};
+use leafwing_input_manager::prelude::*;
 
 use crate::level::GroundDetection;
 use crate::statemanagement::{GameState, PauseState};
@@ -19,18 +20,21 @@ impl Plugin for KiwiPlugin {
                     .run_in_state(GameState::GamePlaying)
                     .run_not_in_state(PauseState::Paused)
                     .with_system(movement)
+                    .with_system(animate_kiwi)
                     .into(),
             )
+            .add_plugin(InspectorPlugin::<InspectorQuerySingle<Entity, With<Kiwi>>>::new())
             .register_ldtk_entity::<KiwiBundle>("Kiwi");
     }
 }
 
+#[derive(Inspectable)]
+struct Inspector {
+    root_elements: InspectorQuery<With<Kiwi>>
+}
+
 #[derive(Component, Default, Debug, Inspectable)]
-pub struct Kiwi; /*{
-                     // idle_animation: helpers::Animation,
-                     // peck_animation: helpers::Animation,
-                     // run_animation: helpers::Animation
-                 }*/
+pub struct Kiwi;
 
 #[derive(Bundle, Default, LdtkEntity)]
 struct KiwiBundle {
@@ -99,7 +103,7 @@ impl From<EntityInstance> for ColliderBundle {
 
         match entity_instance.identifier.as_ref() {
             "Kiwi" => ColliderBundle {
-                collider: CollisionShape::Sphere { radius: 20. },
+                collider: CollisionShape::Sphere { radius: 8. },
                 rigid_body: RigidBody::Dynamic,
                 rotation_constraints,
                 ..Default::default()
@@ -130,15 +134,71 @@ impl From<IntGridCell> for ColliderBundle {
     }
 }
 
+#[derive(Component, Deref, DerefMut)]
+struct AnimationTimer(Timer);
+
+impl Default for AnimationTimer {
+    fn default() -> Self {
+        Self(Timer::from_seconds(0.1, true))
+    }
+}
+
+fn animate_kiwi(
+    mut kiwi_query: Query<
+        (
+            &mut Velocity,
+            &mut TextureAtlasSprite,
+        ),
+        With<Kiwi>
+    >,
+    mut animation_timer: Local<AnimationTimer>,
+    time: Res<Time>
+) {
+
+    for (mut velocity, mut sprite) in kiwi_query.iter_mut() {
+        sprite.index = if velocity.linear.x > 0. {
+            // info!("animate right");
+           sprite.flip_x = false;
+           animation_timer.0.tick(time.delta());
+           let index = 6 + ((sprite.index + if animation_timer.0.finished(){
+               animation_timer.0.reset();
+               1
+           } else {
+               0
+           }) % 4);
+           info!(" Sprite index: {}", index);
+           index
+        } else if velocity.linear.x < 0. {
+           // info!("animate left");
+           sprite.flip_x = true;
+           animation_timer.0.tick(time.delta());
+           let index = 6 + ((sprite.index + if animation_timer.0.finished(){
+               animation_timer.0.reset();
+               1
+           } else {
+               0
+           }) % 4);
+           info!(" Sprite index: {}", index);
+           index
+        } else {
+            // sprite.index = 4;
+            // info!("animate idle if time has passed");
+            6
+        }
+        // info!("{}", velocity.linear.x);
+    }
+}
+
+
 fn movement(
     mut query: Query<
         (&mut Velocity, &mut ActionState<KiwiAction>),
         (With<Kiwi>, Changed<ActionState<KiwiAction>>),
-    >,
+    >
 ) {
-    // info!("Movement");
+    // debug!("Movement");
     for (mut velocity, action_state) in query.iter_mut() {
-        // info!("In query loop");
+        // debug!("In query loop");
         let right = if action_state.pressed(KiwiAction::Right) {
             1.
         } else {
@@ -150,8 +210,15 @@ fn movement(
             0.
         };
 
-        velocity.linear.x = (right - left) * 200.;
+        velocity.linear.x = (right - left) * 100.;
 
+        if velocity.linear.x > 0. {
+            debug!("heading right?");
+        } else if velocity.linear.x < 0. {
+            debug!("heading left?");
+        } else {
+            debug!("stationary");
+        }
         // info!("{} {}", left, right);
 
         if action_state.pressed(KiwiAction::Peck) {

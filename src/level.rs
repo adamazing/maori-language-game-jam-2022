@@ -31,9 +31,10 @@ impl Plugin for LevelManagerPlugin {
             })
             // .add_plugin(NoCameraPlayerPlugin)
             .add_startup_system(setup_camera)
-            .add_enter_system(GameState::GamePlaying, spawn_level)
+            .add_enter_system(GameState::GameIntro, spawn_level)
             .register_ldtk_int_cell::<ForestFloorBundle>(1)
             .register_ldtk_int_cell::<BoardBundle>(2)
+            .register_ldtk_int_cell::<TreeBundle>(3)
             .register_ldtk_entity::<CameraWayPointBundle>("CameraWayPoint")
             .add_system(pause_physics_during_load)
             .add_system(spawn_wall_collision)
@@ -96,6 +97,7 @@ fn setup_camera(mut commands: Commands) {
             depth_calculation: DepthCalculation::ZDifference,
             scaling_mode: ScalingMode::WindowSize,
             window_origin: WindowOrigin::Center,
+            scale: 0.63,
             ..default()
         },
         transform: Transform::from_xyz(0.0,0.0,40.0),
@@ -211,7 +213,15 @@ pub struct ForestFloorBundle {
 #[derive(Clone, Debug, Default, Bundle, LdtkIntCell)]
 pub struct BoardBundle {
     ground: Wall,
+    climbable: Climbable,
 }
+
+#[derive(Clone, Debug, Default, Bundle, LdtkIntCell)]
+pub struct TreeBundle {
+    wall: Wall,
+    climbable: Climbable,
+}
+
 
 fn spawn_level(mut commands: Commands, level: Res<LevelAsset>) {
     debug!("Spawning level");
@@ -523,7 +533,7 @@ pub fn ground_detection(
     }
 }
 
-#[derive(Clone, Default, Component)]
+#[derive(Clone, Default, Component, Inspectable)]
 pub struct GroundDetection {
     pub on_ground: bool,
 }
