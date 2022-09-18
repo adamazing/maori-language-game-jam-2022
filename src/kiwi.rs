@@ -269,7 +269,7 @@ fn movement(
         };
 
         if *peck_state != KiwiPeckState::Pecking {
-            velocity.linear.x = (right - left) * 100.;
+            velocity.linear.x = (right - left) * 60.;
         }
 
         if action_state.pressed(KiwiAction::Peck) {

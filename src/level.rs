@@ -533,7 +533,7 @@ pub fn ground_detection(
     }
 }
 
-#[derive(Clone, Default, Component, Inspectable)]
+#[derive(Clone, Debug, Default, Component, Inspectable)]
 pub struct GroundDetection {
     pub on_ground: bool,
 }

@@ -6,7 +6,7 @@ use bevy_ecs_ldtk::{LdtkEntity, prelude::RegisterLdtkObjects};
 use bevy_inspector_egui::Inspectable;
 use iyes_loopless::prelude::*;
 
-use crate::statemanagement::{GameState, PauseState};
+use crate::{statemanagement::{GameState, PauseState}, level::GroundDetection};
 
 pub struct BugPlugin;
 
@@ -16,11 +16,15 @@ impl Plugin for BugPlugin {
         app
             .insert_resource(BugSpawnTimer(Timer::new(Duration::from_secs(2), true)))
             .register_ldtk_entity::<BugSpawnerBundle>("BugSpawner")
-            .add_system(
-                spawn_bugs
+            .add_system_set(
+                ConditionSet::new()
                     .run_in_state(GameState::GamePlaying)
                     .run_not_in_state(PauseState::Paused)
-            );
+                    .with_system(spawn_bugs)
+                    .with_system(move_bugs)
+                    .into(),
+            )
+            ;
     }
 }
 
@@ -40,6 +44,19 @@ pub struct Climber {
     pub intersecting_climbables: HashSet<Entity>,
 }
 
+#[derive(Component, Default, Debug)]
+pub struct Bug;
+
+#[derive(Bundle, Default)]
+pub struct BugBundle {
+    bug: Bug,
+
+    climber: Climber,
+
+    ground_detection: GroundDetection,
+
+}
+
 /* System to spawn bugs */
 pub fn spawn_bugs(mut commands: Commands,
                   mut bug_spawner_query: Query<&mut BugSpawner>,
@@ -55,8 +72,16 @@ pub fn spawn_bugs(mut commands: Commands,
         info!("timer finished");
         for (mut bug_spawner) in bug_spawners.iter_mut() {
             info!("Bug spawner:");// {}", bug_spawner.entity_instance);
+            commands.spawn_bundle(BugBundle::default())
+            ;
         }
     }
 }
 
+pub fn move_bugs(mut bug_query: Query<(&mut Transform), With<Bug>>){
+    info!("Move bugs");
+    for (mut bug_transform) in bug_query.iter_mut() {
+        bug_transform.translation.y += 100.0;
+    }
+}
 
