@@ -95,9 +95,11 @@ fn setup_camera(mut commands: Commands) {
     commands.spawn_bundle(Camera2dBundle {
         projection: OrthographicProjection {
             depth_calculation: DepthCalculation::ZDifference,
-            scaling_mode: ScalingMode::WindowSize,
+            scaling_mode: ScalingMode::None,
             window_origin: WindowOrigin::Center,
-            scale: 0.63,
+            scale: 0.43,
+            left: -640.0, right: 640.0,
+            bottom: -420.0, top: 420.0,
             ..default()
         },
         transform: Transform::from_xyz(0.0,0.0,40.0),
