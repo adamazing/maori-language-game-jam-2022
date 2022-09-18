@@ -9,7 +9,7 @@ pub struct AssetPlugin;
 
 impl Plugin for AssetPlugin {
     fn build(&self, app: &mut App) {
-        info!("Loading assets");
+        // info!("Loading assets");
         app.add_loading_state(
             LoadingState::new(GameState::Loading)
                 .with_collection::<AudioAssets>()

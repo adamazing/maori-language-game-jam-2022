@@ -24,7 +24,7 @@ impl Plugin for KiwiPlugin {
                     .with_system(animate_kiwi)
                     .into(),
             )
-            .add_plugin(InspectorPlugin::<InspectorQuerySingle<Entity, With<Kiwi>>>::new())
+            // .add_plugin(InspectorPlugin::<InspectorQuerySingle<Entity, With<Kiwi>>>::new())
             .register_ldtk_entity::<KiwiBundle>("Kiwi");
     }
 }
@@ -120,7 +120,7 @@ impl From<IntGridCell> for ColliderBundle {
     fn from(int_grid_cell: IntGridCell) -> ColliderBundle {
         let rotation_constraints = RotationConstraints::lock();
 
-        info!("{:?}", int_grid_cell);
+        // info!("{:?}", int_grid_cell);
         if int_grid_cell.value == 1 || int_grid_cell.value == 3 {
             ColliderBundle {
                 collider: CollisionShape::Cuboid {
@@ -236,10 +236,10 @@ fn kiwi_peck_tracker(
 
     if timer.0.finished(){
 
-        info!("PeckStateTimer finished");
+        // info!("PeckStateTimer finished");
         for (mut kiwi_peck_state, mut sprite, transform) in kiwi_query.iter_mut() {
             if *kiwi_peck_state == KiwiPeckState::Pecking {
-                info!("Reset to idle peckstate");
+                // info!("Reset to idle peckstate");
                 *kiwi_peck_state = KiwiPeckState::Idle;
                 sprite.index = 0;
             }
@@ -273,7 +273,7 @@ fn movement(
         }
 
         if action_state.pressed(KiwiAction::Peck) {
-            info!("Pecking");
+            // info!("Pecking");
             *peck_state = KiwiPeckState::Pecking;
             velocity.linear.x = 0.;
             // velocity.linear.y = 250.;

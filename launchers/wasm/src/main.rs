@@ -56,6 +56,6 @@ fn main() {
     yew::start_app::<Root>();
     // Start the Bevy App
     let mut app = tane_game::app();
-    info!("Starting launcher: WASM");
+    // info!("Starting launcher: WASM");
     app.run();
 }

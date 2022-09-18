@@ -9,7 +9,7 @@ pub use iyes_loopless::prelude::*;
 pub const LAUNCHER_TITLE: &str = "Tane Mahuta";
 
 mod assets;
-mod bug;
+// mod bug;
 mod debug;
 mod helpers;
 mod intro;
@@ -21,7 +21,7 @@ mod render;
 mod statemanagement;
 
 use assets::AssetPlugin;
-use bug::BugPlugin;
+// use bug::BugPlugin;
 use debug::DebugPlugin;
 use intro::IntroPlugin;
 use kiwi::KiwiPlugin;
@@ -50,9 +50,9 @@ pub fn app() -> App {
         .add_plugin(AudioPlugin)
         .add_plugin(LevelManagerPlugin)
         .add_plugin(PausePlugin)
-        .add_plugin(DebugPlugin)
+        // .add_plugin(DebugPlugin)
         .add_plugin(KiwiPlugin)
-        .add_plugin(BugPlugin)
+        // .add_plugin(BugPlugin)
         .add_plugin(IntroPlugin)
         .add_plugin(RenderPlugin);
     app

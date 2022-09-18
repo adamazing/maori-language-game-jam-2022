@@ -464,7 +464,7 @@ pub fn spawn_ground_sensor(
                     });
             });
         } else if let CollisionShape::Sphere { radius } = shape {
-            info!("{:?}", radius);
+            // info!("{:?}", radius);
 
             let detector_shape = CollisionShape::Cuboid {
                 half_extends: Vec3::new(radius / 2., 2., 0.),
